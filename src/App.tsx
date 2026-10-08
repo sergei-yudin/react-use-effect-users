@@ -1,4 +1,15 @@
-import{useEffect,useState}from'react';import'./App.css';type User={id:number;name:string};type DetailsData={id:number;name:string;avatar:string;details:{city:string;company:string;position:string}};const BASE='https://raw.githubusercontent.com/netology-code/ra16-homeworks/master/hooks-context/use-effect/data';
-function List({items,selected,onSelect}:{items:User[];selected:number|null;onSelect:(user:User)=>void}){return <section className="list" aria-label="Пользователи">{items.map(user=><button className={selected===user.id?'active':''} onClick={()=>onSelect(user)} key={user.id}>{user.name}</button>)}</section>}
-function Details({info}:{info:User}){const[data,setData]=useState<DetailsData|null>(null);const[loading,setLoading]=useState(true);const[error,setError]=useState('');useEffect(()=>{const controller=new AbortController();setLoading(true);setError('');fetch(`${BASE}/${info.id}.json`,{signal:controller.signal}).then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json() as Promise<DetailsData>}).then(setData).catch(e=>{if((e as Error).name!=='AbortError')setError('Не удалось загрузить данные пользователя.')}).finally(()=>{if(!controller.signal.aborted)setLoading(false)});return()=>controller.abort()},[info.id]);if(loading)return <section className="details status"><span className="spinner"/>Загрузка профиля…</section>;if(error)return <section className="details error" role="alert">{error}</section>;return data&&<section className="details"><img src={data.avatar} alt={data.name}/><h2>{data.name}</h2><dl><div><dt>Город</dt><dd>{data.details.city}</dd></div><div><dt>Компания</dt><dd>{data.details.company}</dd></div><div><dt>Должность</dt><dd>{data.details.position}</dd></div></dl></section>}
-export default function App(){const[users,setUsers]=useState<User[]>([]);const[selected,setSelected]=useState<User|null>(null);const[loading,setLoading]=useState(true);const[error,setError]=useState('');useEffect(()=>{const controller=new AbortController();fetch(`${BASE}/users.json`,{signal:controller.signal}).then(r=>{if(!r.ok)throw new Error();return r.json() as Promise<User[]>}).then(setUsers).catch(e=>{if((e as Error).name!=='AbortError')setError('Не удалось загрузить список.')}).finally(()=>setLoading(false));return()=>controller.abort()},[]);return <main><header><span>React useEffect</span><h1>Пользователи</h1><p>Выберите человека, чтобы загрузить подробности</p></header>{loading&&<p className="status">Загрузка списка…</p>}{error&&<p className="error">{error}</p>}<div className="layout"><List items={users} selected={selected?.id??null} onSelect={user=>setSelected(current=>current?.id===user.id?current:user)}/>{selected?<Details info={selected}/>:<section className="details placeholder">Выберите пользователя слева</section>}</div></main>}
+import { UsersWorkspace } from "./components/UsersWorkspace";
+import "./App.css";
+
+export default function App() {
+  return (
+    <main>
+      <header>
+        <span>React useEffect</span>
+        <h1>Пользователи</h1>
+        <p>Выберите человека, чтобы загрузить подробности</p>
+      </header>
+      <UsersWorkspace />
+    </main>
+  );
+}
