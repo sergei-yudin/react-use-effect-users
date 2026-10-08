@@ -1,5 +1,6 @@
 import { useUserDetails } from "../hooks/useUserDetails";
 import type { User } from "../types";
+import { getUserAvatarUrl } from "../utils/getUserAvatarUrl";
 
 type Props = {
   user: User;
@@ -27,9 +28,11 @@ export function UserDetailsCard({ user }: Props) {
 
   if (!data) return null;
 
+  const avatarUrl = getUserAvatarUrl(data.avatar, data.id);
+
   return (
     <section className="details">
-      <img src={data.avatar} alt={data.name} />
+      <img src={avatarUrl} alt={data.name} />
       <h2>{data.name}</h2>
       <dl>
         <div>

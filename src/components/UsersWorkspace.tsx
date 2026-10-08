@@ -23,7 +23,7 @@ export function UsersWorkspace() {
           onSelect={selectUser}
         />
         {selectedUser ? (
-          <UserDetailsCard user={selectedUser} />
+          <UserDetailsCard key={selectedUser.id} user={selectedUser} />
         ) : (
           <section className="details placeholder">
             Выберите пользователя слева
